@@ -1,10 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title></title>
+    <meta charset="utf-8">
+    <title>SRFI 238: Codesets</title>
+    <link href="/favicon.png" rel="icon" sizes="192x192" type="image/png">
+    <link rel="stylesheet" href="https://srfi.schemers.org/srfi.css" type="text/css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-  <h1 id="srfi-nnn-codesets">SRFI nnn: Codesets</h1>
+  <h1 id="srfi-238-codesets"><a href="https://srfi.schemers.org/"><img class="srfi-logo" src="https://srfi.schemers.org/srfi-logo.svg" alt="SRFI surfboard logo" /></a>SRFI 238: Codesets</h1>
   <p>by Lassi Kortela</p>
   <h2 id="status">Status</h2>
   <p>Draft</p>
@@ -15,6 +19,8 @@
   between numbers and symbols in a codeset and fetch messages by
   code. Examples are given using the Unix <em>errno</em> and
   <em>signal</em> codesets.</p>
+  <h2 id="issues">Issues</h2>
+  <p>None at present.</p>
   <h2 id="rationale">Rationale</h2>
   <p>Instead of having a separate lookup interface for each
   codeset, with trivial variations between them, it’s easier to
@@ -180,11 +186,12 @@
   the message may be in a language other than English.</p>
   <h2 id="implementation">Implementation</h2>
   <p>An implementation for Gambit is available in this SRFI’s
-  repository. It provides two codesets, <code>errno</code> and
+    <a href="https://github.com/scheme-requests-for-implementation/srfi-238">repository</a>. It provides two codesets, <code>errno</code> and
   <code>signal</code>, based on the codes of those Unix interfaces
   retrieved via the C foreign function interface.</p>
+  <h2 id="acknowledgements">Acknowledgements</h2>
   <h2 id="copyright">Copyright</h2>
-  <p>Copyright (C) Lassi Kortela (2022).</p>
+  <p>&copy; 2022 Lassi Kortela.</p>
   <p>Permission is hereby granted, free of charge, to any person
   obtaining a copy of this software and associated documentation
   files (the “Software”), to deal in the Software without
@@ -204,5 +211,7 @@
   WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
   OTHER DEALINGS IN THE SOFTWARE.</p>
+  <hr>
+  <address>Editor: <a href="mailto:srfi-editors+at+srfi+dot+schemers+dot+org">Arthur A. Gleckler</a></address>
 </body>
 </html>
