@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+</head>
+<body>
+  <h1 id="srfi-nnn-codesets">SRFI nnn: Codesets</h1>
+  <p>by Lassi Kortela</p>
+  <h2 id="status">Status</h2>
+  <p>Draft</p>
+  <h2 id="abstract">Abstract</h2>
+  <p>Many programming interfaces rely on a set of condition codes
+  where each code has a numeric ID, a mnemonic symbol, and a
+  human-readable message. This SRFI defines a facility to translate
+  between numbers and symbols in a codeset and fetch messages by
+  code. Examples are given using the Unix <em>errno</em> and
+  <em>signal</em> codesets.</p>
+  <h2 id="rationale">Rationale</h2>
+  <p>Instead of having a separate lookup interface for each
+  codeset, with trivial variations between them, it’s easier to
+  have just one.</p>
+  <h3 id="survey-of-prior-art">Survey of prior art</h3>
+  <p>GNU CLISP has an <code>errno</code> function that accepts
+  either a number or a symbol, and returns the other. It also has a
+  <code>strerror</code> function.</p>
+  <p>Gauche has two hash tables for errno lookup.</p>
+  <p>Chicken has an <code>errno</code> module exporting the
+  constants.</p>
+  <p>Python has an <code>errno</code> module exporting the
+  constants and a lookup table.</p>
+  <p>There are sure to be countless similar interfaces in other
+  systems.</p>
+  <h3 id="convenience">Convenience</h3>
+  <p>The interface given in this SRFI prioritizes convenience and
+  simplicity for the caller. Common codesets can be referred to
+  using symbols; the user does not have to fetch a special codeset
+  object before making queries. The interface is lenient, returning
+  <code>#f</code> instead of raising an exception whenever
+  information is unavailable.</p>
+  <p>Error handling is typically regarded as a chore into which
+  programmers do not like to invest extra time. It is hoped that a
+  forgiving interface encourages Scheme programmers to add
+  user-friendly error reporting in more places.</p>
+  <h3 id="no-predicates">No predicates</h3>
+  <p>This SRFI does not provide the predicates
+  <code>codeset-symbol?</code> and <code>codeset-number?</code>
+  because for many codesets, especially those retrieved from a
+  low-level language using a groveler, there is no reliable way to
+  enumerate all the codes that might be manifest on a given
+  system.</p>
+  <p>For example, assume a hypothetical C library called
+  <code>libfoo</code> whose version 1.1 adds the error code
+  <code>FOO_LOST_MOJO</code>. A Scheme system built against
+  <code>libfoo</code> version 1.0 would say that
+  <code>(codeset-symbol? 'libfoo 'FOO_LOST_MOJO)</code> is false.
+  But if the backward-compatible <code>libfoo</code> 1.1 is
+  dynamically linked to that Scheme system, the claim becomes
+  misleading.</p>
+  <p>In many situations a Scheme program receives either a number
+  or a symbol from an external interface. It’s nice if such a
+  status code matches a known code so that more information can be
+  obtained. But since external components often change, this should
+  not be relied upon. The right attitude is to regard codeset
+  lookup as a luxury, not a necessity.</p>
+  <h2 id="specification">Specification</h2>
+  <h3 id="codeset-objects">Codeset objects</h3>
+  <p>The procedures in this SRFI take a <em>codeset</em> argument.
+  It can be either a symbol or some kind of implementation-defined
+  object.</p>
+  <p>Codeset symbols are tracked in the <a href=
+  "https://registry.scheme.org/">Scheme Registry</a>.</p>
+  <p>The data structure used to implement a codeset is unspecified.
+  It is also unspecified whether information about a codeset is
+  pre-seeded or lazy-loaded. Different codesets may be implemented
+  differently.</p>
+  <h3 id="procedures">Procedures</h3>
+  <p><code>(codeset? object) =&gt; boolean</code></p>
+  <p>Return <code>#t</code> if <em>object</em> is either</p>
+  <ul>
+    <li>a symbol naming a codeset known to the implementation,
+    or</li>
+    <li>an implementation-defined codeset object.</li>
+  </ul>
+  <p>Else return <code>#f</code>.</p>
+  <p><code>(codeset-symbols codeset) =&gt; symbol-list</code></p>
+  <p>Return a list of zero or more symbols in arbitrary order with
+  no duplicates.</p>
+  <p>The list should comprise all known symbols in
+  <em>codeset</em>. In many cases there is no way to reliably
+  enumerate all extant symbols. In that case the list should
+  contain as many as are known.</p>
+  <p>It’s up to the implementation whether the result list is fresh
+  or an old list is re-used. It is an error for the caller to
+  mutate the result.</p>
+  <p><code>(codeset-symbol codeset code) =&gt; symbol or
+  #f</code></p>
+  <p>If <em>code</em> is an integer matching a code in
+  <em>codeset</em>, return the corresponding symbol.</p>
+  <p>If <em>code</em> is some other exact integer, return
+  <code>#f</code>.</p>
+  <p>If <em>code</em> is a symbol, return it as-is.</p>
+  <p>It is an error if <em>code</em> is something other than a
+  symbol or an exact integer.</p>
+  <p><code>(codeset-number codeset code) =&gt; integer or
+  #f</code></p>
+  <p>If <em>code</em> is a symbol matching a code in
+  <em>codeset</em>, return the corresponding integer value.</p>
+  <p>If <em>code</em> is some other symbol, return
+  <code>#f</code>.</p>
+  <p>If <em>code</em> is an exact integer, return it as-is.</p>
+  <p>It is an error if <em>code</em> is something other than a
+  symbol or an exact integer.</p>
+  <p><code>(codeset-message codeset code [locale]) =&gt; string or
+  #f</code></p>
+  <p>If <em>code</em> is a symbol or an integer matching a code in
+  <em>codeset</em>, and a message is known for that code, return
+  the message as a string.</p>
+  <p>If no message is known to be associated with <em>code</em>,
+  return <code>#f</code>.</p>
+  <p>It is an error if <em>code</em> is something other than a
+  symbol or an exact integer.</p>
+  <p>If the <em>locale</em> argument is missing or <code>#f</code>,
+  the implementation is free to return a message in any locale.
+  Otherwise the implementation should return a message in the
+  natural language of <em>locale</em>. If the requested message is
+  not available in the given locale, or the implementation does not
+  understand the <em>locale</em> argument, <code>#f</code> should
+  be returned.</p>
+  <p>The type and interpretation of <em>locale</em> is
+  implementation-defined. Locale representation is a complex
+  problem that cannot be solved in time for this SRFI. The
+  implementer community should come up with conventions, which can
+  perhaps be codified in a future SRFI.</p>
+  <p>It’s up to the implementation whether the result string is
+  fresh. It is an error for the caller to mutate the result.</p>
+  <h2 id="examples">Examples</h2>
+  <p>Implementations that provide the <code>errno</code> codeset
+  are expected to behave as follows.</p>
+  <div class="sourceCode" id="cb1">
+    <pre class="sourceCode scheme"><code class=
+    "sourceCode scheme"><span id="cb1-1"><a href="#cb1-1"
+    aria-hidden="true" tabindex=
+    "-1"></a>(codeset? 'errno) <span class=
+    "op">=&gt;</span> <span class="dv">#t</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex=
+"-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex=
+"-1"></a>(codeset-symbols 'errno) <span class=
+"op">=&gt;</span> (EPERM ENOENT ESRCH <span class=
+"op">...</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex=
+"-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex=
+"-1"></a>(codeset-symbol 'errno 'EPERM) <span class=
+"op">=&gt;</span> EPERM</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex=
+"-1"></a>(codeset-symbol 'errno <span class=
+"dv">1</span>) <span class="op">=&gt;</span> EPERM</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex=
+"-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex=
+"-1"></a>(codeset-number 'errno 'EPERM) <span class=
+"op">=&gt;</span> <span class="dv">1</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex=
+"-1"></a>(codeset-number 'errno <span class=
+"dv">1</span>) <span class="op">=&gt;</span> <span class=
+"dv">1</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex=
+"-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex=
+"-1"></a>(codeset-message 'errno 'EPERM) <span class=
+"op">=&gt;</span> <span class=
+"st">"Operation not permitted"</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex=
+"-1"></a>(codeset-message 'errno <span class=
+"dv">1</span>) <span class="op">=&gt;</span> <span class=
+"st">"Operation not permitted"</span></span></code></pre>
+  </div>
+  <p>The symbols may be listed in a different order. In some cases
+  the message may be in a language other than English.</p>
+  <h2 id="implementation">Implementation</h2>
+  <p>An implementation for Gambit is available in this SRFI’s
+  repository. It provides two codesets, <code>errno</code> and
+  <code>signal</code>, based on the codes of those Unix interfaces
+  retrieved via the C foreign function interface.</p>
+  <h2 id="copyright">Copyright</h2>
+  <p>Copyright (C) Lassi Kortela (2022).</p>
+  <p>Permission is hereby granted, free of charge, to any person
+  obtaining a copy of this software and associated documentation
+  files (the “Software”), to deal in the Software without
+  restriction, including without limitation the rights to use,
+  copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the
+  Software is furnished to do so, subject to the following
+  conditions:</p>
+  <p>The above copyright notice and this permission notice
+  (including the next paragraph) shall be included in all copies or
+  substantial portions of the Software.</p>
+  <p>THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY
+  KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+  WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
+  AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+  HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+  WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+  OTHER DEALINGS IN THE SOFTWARE.</p>
+</body>
+</html>
