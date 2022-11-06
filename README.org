@@ -7,6 +7,8 @@
 
 keywords: [[https://srfi.schemers.org/?keywords=operating-system][Operating System]]
 
+library-name: codesets
+
 This repository hosts [[https://srfi.schemers.org/srfi-238/][SRFI 238]]: Codesets, a [[https://srfi.schemers.org/][Scheme Request for Implementation]].
 
 This SRFI is in /draft/ status.
