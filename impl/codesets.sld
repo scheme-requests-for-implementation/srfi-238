@@ -28,7 +28,9 @@
     (define (no-message _) #f))
   (cond-expand
    (gambit
-    (include-library-declarations "codesets.gambit.scm")))
+    (include-library-declarations "codesets.gambit.scm"))
+   (gauche
+    (include-library-declarations "codesets.gauche.scm")))
   (begin
 
     (define global-codesets
