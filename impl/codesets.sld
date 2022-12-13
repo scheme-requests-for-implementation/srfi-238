@@ -7,10 +7,6 @@
    codeset-message)
   (import (scheme base)
           (scheme case-lambda))
-  (cond-expand
-   (gambit
-    (import (gambit))
-    (include "codesets.gambit.scm")))
   (begin
 
     (define (strings->alist numbers symbols)
@@ -29,11 +25,11 @@
             (parse string->number numbers)
             (parse string->symbol symbols))))
 
-    (define (signal-alist) (retrieve-strings "signal" strings->alist))
-    (define (errno-alist) (retrieve-strings "errno" strings->alist))
-    (define errno-message (c-lambda (int) char-string "strerror"))
-
-    (define (no-message _) #f)
+    (define (no-message _) #f))
+  (cond-expand
+   (gambit
+    (include-library-declarations "codesets.gambit.scm")))
+  (begin
 
     (define global-codesets
       (list (list 'errno (errno-alist) errno-message)
