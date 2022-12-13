@@ -44,6 +44,7 @@
       <a href="#specification">Specification</a>
       <ul>
         <li><a href="#codeset-objects">Codeset objects</a></li>
+        <li><a href="#codeset-registry">Codeset registry</a></li>
         <li><a href="#procedures">Procedures</a></li>
       </ul>
     </li>
@@ -131,15 +132,20 @@
   systems.</p>
   <h2 id="specification">Specification</h2>
   <h3 id="codeset-objects">Codeset objects</h3>
-  <p>The procedures in this SRFI take a <em>codeset</em> argument.
-  It can be either a symbol or some kind of implementation-defined
-  object.</p>
-  <p>Symbols denoting a codeset are tracked in the <a href=
-  "https://registry.scheme.org/#codesets">Scheme Registry</a>.</p>
+  <p>The procedures in this SRFI take a <em>codeset</em> argument. It
+  can be either a symbol or some kind of implementation-defined
+  object. It is an error to pass a <em>codeset</em> argument of some
+  other type.</p>
+  <p>Note that it is valid to pass a <em>codeset</em> symbol that does
+  not refer to a codeset known to the implementation. In that case, it
+  is treated like an empty codeset.</p>
   <p>The data structure used to implement a codeset is unspecified.
   It is also unspecified whether information about a codeset is
   pre-seeded or lazy-loaded. Different codesets may be implemented
   differently.</p>
+  <h3 id="codeset-registry">Codeset registry</h3>
+  <p>Symbols denoting a codeset are tracked in the <a href=
+  "https://registry.scheme.org/#codesets">Scheme Registry</a>.</p>
   <h3 id="procedures">Procedures</h3>
   <p><code>(codeset? object) =&gt; boolean</code></p>
   <p>Return <code>#t</code> if <em>object</em> is either</p>
@@ -156,10 +162,6 @@
   <em>codeset</em>. In many cases there is no way to reliably
   enumerate all extant symbols. In that case the list should
   contain as many as are known.</p>
-  <p>If <em>codeset</em> is a symbol but does not refer to a known
-  codeset, an empty list is returned.</p>
-  <p>It is an error to pass a <em>codeset</em> argument that does
-  not satisfy <code>codeset?</code>.</p>
   <p>It’s up to the implementation whether the result list is fresh
   or an old list is re-used. It is an error for the caller to
   mutate the result.</p>
