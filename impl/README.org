@@ -1,0 +1,11 @@
+* SRFI 238 sample implementation
+
+Currently works on
+
+Gambit:
+
+~./build-gambit.sh~
+
+Gauche:
+
+~gosh -I . demo.scm~

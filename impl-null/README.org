@@ -1,0 +1,4 @@
+* SRFI 238 null implementation
+
+This is an implementation that conforms to the specification of the
+SRFI while not providing any actual codesets.
