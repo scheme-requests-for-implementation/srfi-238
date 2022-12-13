@@ -88,9 +88,9 @@
         (codeset-message codeset code #f))
 
        ((codeset code locale)
-        (and (not locale)
-             (let ((number (codeset-number codeset code)))
-               (and number
-                    (let ((number->message (codeset-number->message codeset)))
-                      (and number->message
-                           (number->message number)))))))))))
+        (let ((number (codeset-number codeset code)))
+          (and number
+               (not locale)
+               (let ((number->message (codeset-number->message codeset)))
+                 (and number->message
+                      (number->message number))))))))))
