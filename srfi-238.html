@@ -101,6 +101,8 @@
   <em>codeset</em>. In many cases there is no way to reliably
   enumerate all extant symbols. In that case the list should
   contain as many as are known.</p>
+  <p>If <em>codeset</em> is a symbol but does not refer to a known
+  codeset, an empty list is returned.</p>
   <p>It’s up to the implementation whether the result list is fresh
   or an old list is re-used. It is an error for the caller to
   mutate the result.</p>
