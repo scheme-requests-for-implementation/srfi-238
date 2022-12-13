@@ -86,11 +86,13 @@
   forgiving interface encourages Scheme programmers to add
   user-friendly error reporting in more places.</p>
   <h3 id="enumerations-and-predicates">Enumerations and predicates</h3>
-  <p>This SRFI does not provide the predicates
-  <code>codeset-symbol?</code> and <code>codeset-number?</code>
-  because for many codesets, especially those retrieved from a
+  <p>It is not appropriate to define a standard list of codes for each
+  codeset since the full set of values encountered in the wild is not
+  easily fixed. For many codesets, especially those retrieved from a
   low-level language using a groveler, there is no reliable way to
-  enumerate all the codes that might be manifest on a given system.</p>
+  enumerate all the codes that might be manifest on a given system.
+  New codes are often added by new versions of software, new editions
+  of standards, and implementations which extend the standards.</p>
   <p>For example, assume a hypothetical C library called
   <code>libfoo</code> whose version 1.1 adds the error code
   <code>FOO_LOST_MOJO</code>. A Scheme system built against
@@ -99,17 +101,16 @@
   But if the backward-compatible <code>libfoo</code> 1.1 is
   dynamically linked to that Scheme system, the claim becomes
   misleading.</p>
+  <p>For that reason the predicates
+  <code>codeset-symbol?</code> and <code>codeset-number?</code> are
+  not provided.</p>
   <p>In a similar vein, some users would prefer that the code symbols
   come from a pre-defined enumeration. Such enumerations can be
-  created in R<sup>6</sup>RS, for instance.</p>
-  <p>The author's opinion is that Scheme permits users to easily
-  create their own enumerations from whichever symbols they wish. Each
-  application or library wishing to use an enumeration should list the
-  codes that it needs. It is not appropriate to define standard
-  enumerations for all codesets since for many of them the full set of
-  values seen in the wild is not easily fixed. New codes are often
-  added by new versions of software, new editions of standards, and
-  implementations which extend the standards.</p>
+  created in R<sup>6</sup>RS, for instance. The author's opinion is
+  that Scheme permits users to easily create their own enumerations
+  from whichever symbols they wish. Each application or library
+  wishing to use an enumeration should list the codes that it
+  needs.</p>
   <h3 id="survey-of-prior-art">Survey of prior art</h3>
   <p>This survey is limited to <code>errno</code> wrappers.</p>
   <ul>
