@@ -204,47 +204,19 @@
   fresh. It is an error for the caller to mutate the result.</p>
   <h2 id="examples">Examples</h2>
   <p>Implementations that provide the <code>errno</code> codeset
-  are expected to behave as follows.</p>
-  <div class="sourceCode" id="cb1">
-    <pre class="sourceCode scheme"><code class=
-    "sourceCode scheme"><span id="cb1-1"><a href="#cb1-1"
-    aria-hidden="true" tabindex=
-    "-1"></a>(codeset? 'errno) <span class=
-    "op">=&gt;</span> <span class="dv">#t</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex=
-"-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex=
-"-1"></a>(codeset-symbols 'errno) <span class=
-"op">=&gt;</span> (EPERM ENOENT ESRCH <span class=
-"op">...</span>)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex=
-"-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex=
-"-1"></a>(codeset-symbol 'errno 'EPERM) <span class=
-"op">=&gt;</span> EPERM</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex=
-"-1"></a>(codeset-symbol 'errno <span class=
-"dv">1</span>) <span class="op">=&gt;</span> EPERM</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex=
-"-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex=
-"-1"></a>(codeset-number 'errno 'EPERM) <span class=
-"op">=&gt;</span> <span class="dv">1</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex=
-"-1"></a>(codeset-number 'errno <span class=
-"dv">1</span>) <span class="op">=&gt;</span> <span class=
-"dv">1</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex=
-"-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex=
-"-1"></a>(codeset-message 'errno 'EPERM) <span class=
-"op">=&gt;</span> <span class=
-"st">"Operation not permitted"</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex=
-"-1"></a>(codeset-message 'errno <span class=
-"dv">1</span>) <span class="op">=&gt;</span> <span class=
-"st">"Operation not permitted"</span></span></code></pre>
-  </div>
+      are expected to behave as follows.</p>
+  <pre>(codeset? 'errno) =&gt; #t
+
+(codeset-symbols 'errno) =&gt; (EPERM ENOENT ESRCH ...)
+
+(codeset-symbol 'errno 'EPERM) =&gt; EPERM
+(codeset-symbol 'errno 1) =&gt; EPERM
+
+(codeset-number 'errno 'EPERM) =&gt; 1
+(codeset-number 'errno 1) =&gt; 1
+
+(codeset-message 'errno 'EPERM) =&gt; "Operation not permitted"
+(codeset-message 'errno 1) =&gt; "Operation not permitted"</pre>
   <p>The symbols may be listed in a different order. In some cases the
   number may differ and the message may be in a language other than
   English.</p>
