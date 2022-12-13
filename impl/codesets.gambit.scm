@@ -1,6 +1,22 @@
 (import (gambit))
 (begin
 
+  (define (strings->alist numbers symbols)
+    (define (parse convert string)
+      (let loop ((parts '()) (a 0) (b 0))
+        (cond ((= b (string-length string))
+               (reverse parts))
+              ((char=? #\, (string-ref string b))
+               (let ((part (convert (string-copy string a b))))
+                 (loop (cons part parts) (+ b 1) (+ b 1))))
+              (else
+               (loop parts a (+ b 1))))))
+    (list-sort
+     (lambda (a b) (< (car a) (car b)))
+     (map cons
+          (parse string->number numbers)
+          (parse string->symbol symbols))))
+
   (c-declare "#include \"glue.h\"")
 
   (define-macro (retrieve-strings which proc)
