@@ -5,7 +5,7 @@
 
 
 
-keywords: [[https://srfi.schemers.org/?keywords=operating-system][Operating System]]
+keywords: [[https://srfi.schemers.org/?keywords=operating-system][Operating System]], [[https://srfi.schemers.org/?keywords=error-handling][Error Handling]], [[https://srfi.schemers.org/?keywords=introspection][Introspection]]
 
 library-name: codesets
 
