@@ -28,38 +28,41 @@
   <h2 id="issues">Issues</h2>
   <p>None at present.</p>
   <h2 id="rationale">Rationale</h2>
-  <p>Instead of having a separate lookup interface for each
-  codeset, with trivial variations between them, it’s easier to
-  have just one.</p>
-  <h3 id="survey-of-prior-art">Survey of prior art</h3>
-  <p>GNU CLISP has an <code>errno</code> function that accepts
-  either a number or a symbol, and returns the other. It also has a
-  <code>strerror</code> function.</p>
-  <p>Gauche has two hash tables for errno lookup.</p>
-  <p>Chicken has an <code>errno</code> module exporting the
-  constants.</p>
-  <p>Python has an <code>errno</code> module exporting the
-  constants and a lookup table.</p>
-  <p>There are sure to be countless similar interfaces in other
-  systems.</p>
+  <h3 id="motivation">Motivation</h3>
+  <p>Instead of having a separate lookup interface for each codeset,
+  with trivial variations between them, it is easier to have just one.</p>
+  <h3 id="goals">Goals</h3>
+  <p>The goals of this SRFI are as follows.</p>
+  <ul>
+      <li>Provide a comfortable user interface.</li>
+      <li>Support a wide range of implementation strategies and
+      environments.</li>
+      <li>Impose a minimum of fuss on the implementer.</li>
+  </ul>
+  <p>The SRFI defines a minimal foundation which can be supplied by
+  even the most featherweight Scheme implementation. More features can
+  be built on top of this foundation. In particular, this SRFI does
+  not provide a way for users to define their own codesets. That's
+  something a Scheme implementation with a <em>foreign function
+  interface</em> should provide, and which should perhaps be
+  standardized in another SRFI.</p>
   <h3 id="convenience">Convenience</h3>
   <p>The interface given in this SRFI prioritizes convenience and
-  simplicity for the caller. Common codesets can be referred to
-  using symbols; the user does not have to fetch a special codeset
-  object before making queries. The interface is lenient, returning
-  <code>#f</code> instead of raising an exception whenever
-  information is unavailable.</p>
+  simplicity for the caller. Common codesets can be referred to using
+  symbols; the user does not have to fetch a special codeset object
+  before making queries. The interface is lenient, returning
+  <code>#f</code> instead of raising an exception whenever information
+  is unavailable.</p>
   <p>Error handling is typically regarded as a chore into which
   programmers do not like to invest extra time. It is hoped that a
   forgiving interface encourages Scheme programmers to add
   user-friendly error reporting in more places.</p>
-  <h3 id="no-predicates">No predicates</h3>
+  <h3 id="enumerations-and-predicates">Enumerations and predicates</h3>
   <p>This SRFI does not provide the predicates
   <code>codeset-symbol?</code> and <code>codeset-number?</code>
   because for many codesets, especially those retrieved from a
   low-level language using a groveler, there is no reliable way to
-  enumerate all the codes that might be manifest on a given
-  system.</p>
+  enumerate all the codes that might be manifest on a given system.</p>
   <p>For example, assume a hypothetical C library called
   <code>libfoo</code> whose version 1.1 adds the error code
   <code>FOO_LOST_MOJO</code>. A Scheme system built against
@@ -68,12 +71,34 @@
   But if the backward-compatible <code>libfoo</code> 1.1 is
   dynamically linked to that Scheme system, the claim becomes
   misleading.</p>
-  <p>In many situations a Scheme program receives either a number
-  or a symbol from an external interface. It’s nice if such a
-  status code matches a known code so that more information can be
-  obtained. But since external components often change, this should
-  not be relied upon. The right attitude is to regard codeset
-  lookup as a luxury, not a necessity.</p>
+  <p>In a similar vein, some users would prefer that the code symbols
+  come from a pre-defined enumeration. Such enumerations can be
+  created in R<sup>6</sup>RS, for instance.</p>
+  <p>The author's opinion is that Scheme permits users to easily
+  create their own enumerations from whichever symbols they wish. Each
+  application or library wishing to use an enumeration should list the
+  codes that it needs. It is not appropriate to define standard
+  enumerations for all codesets since for many of them the full set of
+  values seen in the wild is not easily fixed. New codes are often
+  added by new versions of software, new editions of standards, and
+  implementations which extend the standards.</p>
+  <h3 id="survey-of-prior-art">Survey of prior art</h3>
+  <p>This survey is limited to <code>errno</code> wrappers.</p>
+  <ul>
+      <li>Gauche has two hash tables for <code>errno</code> lookup.</li>
+      <li>Chicken has an <code>errno</code> module exporting the
+      constants.</li>
+      <li>GNU CLISP has an <code>errno</code> function that accepts
+      either a number or a symbol and returns the other. It also has a
+      <code>strerror</code> function.</li>
+      <li>The Standard ML Basis Library defines <code>OS.syserror</code>
+      as an abstract data type. In SML/NJ the concrete type is an
+      integer.</li>
+      <li>Python has an <code>errno</code> module exporting the
+      constants and a lookup table.</li>
+  </ul>
+  <p>There are sure to be countless similar interfaces in other
+  systems.</p>
   <h2 id="specification">Specification</h2>
   <h3 id="codeset-objects">Codeset objects</h3>
   <p>The procedures in this SRFI take a <em>codeset</em> argument.
@@ -192,13 +217,36 @@
 "dv">1</span>) <span class="op">=&gt;</span> <span class=
 "st">"Operation not permitted"</span></span></code></pre>
   </div>
-  <p>The symbols may be listed in a different order. In some cases
-  the message may be in a language other than English.</p>
+  <p>The symbols may be listed in a different order. In some cases the
+  number may differ and the message may be in a language other than
+  English.</p>
+  <h3 id="enumerations">Enumerations</h3>
+  <p>The following is a simple way to roll your own enumeration.</p>
+  <pre>(define-syntax define-symbols
+  (syntax-rules ()
+    ((define-symbols symbol ...)
+     (begin (define symbol 'symbol) ...))))
+
+(define-symbols
+  EPERM
+  ENOENT
+  ESRCH
+  EINTR
+  EIO
+  ENXIO
+  E2BIG
+  ENOEXEC
+  EBADF
+  ECHILD)</pre>
+  <p>Now typos such as
+  <code>(codeset-message 'errno ECHILE)</code> will be caught.</p>
   <h2 id="implementation">Implementation</h2>
   <p>An implementation for Gambit and Gauche is available in this SRFI’s
     <a href="https://github.com/scheme-requests-for-implementation/srfi-238">repository</a>. It provides two codesets, <code>errno</code> and
   <code>signal</code>, based on the codes of those Unix interfaces
-  retrieved via the C foreign function interface.</p>
+  retrieved from the C programming language.</p>
+  <p>For the sake of curiosity, a null implementation and a Common
+  Lisp implementation are also supplied.</p>
   <h2 id="acknowledgements">Acknowledgements</h2>
   <h2 id="copyright">Copyright</h2>
   <p>&copy; 2022 Lassi Kortela.</p>
