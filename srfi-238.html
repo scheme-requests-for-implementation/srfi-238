@@ -224,6 +224,21 @@
   number may differ and the message may be in a language other than
   English.</p>
   <h3 id="enumerations">Enumerations</h3>
+  <p>The following is a way to use R<sup>6</sup>RS enumerations.</p>
+  <pre>(define-enumeration errno
+  (EPERM
+   ENOENT
+   ESRCH
+   EINTR
+   EIO
+   ENXIO
+   E2BIG
+   ENOEXEC
+   EBADF
+   ECHILD)
+  errno-set)
+
+(codeset-message 'errno (errno ENOENT))</pre>
   <p>The following is a simple way to roll your own enumeration.</p>
   <pre>(define-syntax define-symbols
   (syntax-rules ()
