@@ -136,9 +136,9 @@
   can be either a symbol or some kind of implementation-defined
   object. It is an error to pass a <em>codeset</em> argument of some
   other type.</p>
-  <p>Note that it is valid to pass a <em>codeset</em> symbol that does
-  not refer to a codeset known to the implementation. In that case, it
-  is treated like an empty codeset.</p>
+  <p>It is valid to pass a <em>codeset</em> symbol that does not refer
+  to a codeset known to the implementation. In this case the unknown
+  codeset is treated like an empty codeset.</p>
   <p>The data structure used to implement a codeset is unspecified.
   It is also unspecified whether information about a codeset is
   pre-seeded or lazy-loaded. Different codesets may be implemented
@@ -158,10 +158,9 @@
   <p><code>(codeset-symbols codeset) =&gt; symbol-list</code></p>
   <p>Return a list of zero or more symbols in arbitrary order with
   no duplicates.</p>
-  <p>The list should comprise all known symbols in
-  <em>codeset</em>. In many cases there is no way to reliably
-  enumerate all extant symbols. In that case the list should
-  contain as many as are known.</p>
+  <p>The list should comprise all symbols in <em>codeset</em>. In many
+  cases there is no way to reliably enumerate all extant symbols. In
+  those cases the list should contain as many as are known.</p>
   <p>It’s up to the implementation whether the result list is fresh
   or an old list is re-used. It is an error for the caller to
   mutate the result.</p>
