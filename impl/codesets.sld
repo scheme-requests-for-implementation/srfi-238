@@ -19,10 +19,13 @@
       (list (list 'errno (errno-alist) errno-message)
             (list 'signal (signal-alist) no-message)))
 
+    (define (typecheck-codeset object)
+      (unless (symbol? object)
+        (error "Not a codeset" object)))
+
     (define (codeset-entry codeset)
-      (if (symbol? codeset)
-          (assq codeset global-codesets)
-          (error "Not a codeset" codeset)))
+      (typecheck-codeset codeset)
+      (assq codeset global-codesets))
 
     (define (codeset-alist codeset)
       (let ((entry (codeset-entry codeset)))
@@ -54,14 +57,23 @@
         (and entry (list-ref entry 2))))
 
     (define (codeset-symbol codeset code)
-      (cond ((symbol? code) code)
-            ((integer? code) (codeset-number->symbol codeset code))
-            (else (bad-code code))))
+      (cond ((symbol? code)
+             (typecheck-codeset codeset)
+             code)
+            ((integer? code)
+             (typecheck-codeset codeset)
+             (codeset-number->symbol codeset code))
+            (else
+             (bad-code code))))
 
     (define (codeset-number codeset code)
-      (cond ((symbol? code) (codeset-symbol->number codeset code))
-            ((integer? code) code)
-            (else (bad-code code))))
+      (cond ((integer? code)
+             (typecheck-codeset codeset)
+             code)
+            ((symbol? code)
+             (codeset-symbol->number codeset code))
+            (else
+             (bad-code code))))
 
     (define (codeset-message codeset code)
       (let ((number (codeset-number codeset code)))
