@@ -182,7 +182,7 @@
   <p>If <em>code</em> is an exact integer, return it as-is.</p>
   <p>It is an error if <em>code</em> is something other than a
   symbol or an exact integer.</p>
-  <p><code>(codeset-message codeset code [locale]) =&gt; string or
+  <p><code>(codeset-message codeset code) =&gt; string or
   #f</code></p>
   <p>If <em>code</em> is a symbol or an integer matching a code in
   <em>codeset</em>, and a message is known for that code, return
@@ -191,18 +191,11 @@
   return <code>#f</code>.</p>
   <p>It is an error if <em>code</em> is something other than a
   symbol or an exact integer.</p>
-  <p>If the <em>locale</em> argument is missing or <code>#f</code>,
-  the implementation is free to return a message in any locale.
-  Otherwise the implementation should return a message in the
-  natural language of <em>locale</em>. If the requested message is
-  not available in the given locale, or the implementation does not
-  understand the <em>locale</em> argument, <code>#f</code> should
-  be returned.</p>
-  <p>The type and interpretation of <em>locale</em> is
-  implementation-defined. Locale representation is a complex
-  problem that cannot be solved in time for this SRFI. The
-  implementer community should come up with conventions, which can
-  perhaps be codified in a future SRFI.</p>
+  <p>The implementation is free to return a message in any language.
+  Extensions of this procedure should add an optional third argument
+  for the locale. It's permitted to export such an extended procedure
+  from this SRFI's library, but users of this SRFI shall not expect
+  the extended argument to be availble.</p>
   <p>It’s up to the implementation whether the result string is
   fresh. It is an error for the caller to mutate the result.</p>
   <h2 id="examples">Examples</h2>
