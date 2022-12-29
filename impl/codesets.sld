@@ -5,8 +5,7 @@
    codeset-symbol
    codeset-number
    codeset-message)
-  (import (scheme base)
-          (scheme case-lambda))
+  (import (scheme base))
   (cond-expand
    (gambit
     (include-library-declarations "codesets.gambit.scm"))
@@ -64,16 +63,9 @@
             ((integer? code) code)
             (else (bad-code code))))
 
-    (define codeset-message
-      (case-lambda
-
-       ((codeset code)
-        (codeset-message codeset code #f))
-
-       ((codeset code locale)
-        (let ((number (codeset-number codeset code)))
-          (and number
-               (not locale)
-               (let ((number->message (codeset-number->message codeset)))
-                 (and number->message
-                      (number->message number))))))))))
+    (define (codeset-message codeset code)
+      (let ((number (codeset-number codeset code)))
+        (and number
+             (let ((number->message (codeset-number->message codeset)))
+               (and number->message
+                    (number->message number))))))))
