@@ -85,10 +85,9 @@
         (t
          (bad-code code))))
 
-(defun codeset-message (codeset code &optional locale)
+(defun codeset-message (codeset code)
   (let ((number (codeset-number codeset code)))
     (and number
-         (not locale)
          (let ((number->message (codeset-number->message codeset)))
            (and number->message
                 (funcall number->message number))))))
