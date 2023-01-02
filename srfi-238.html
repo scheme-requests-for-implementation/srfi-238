@@ -26,8 +26,6 @@
   between numbers and symbols in a codeset and fetch messages by
   code. Examples are given using the Unix <em>errno</em> and
   <em>signal</em> codesets.</p>
-  <h2 id="issues">Issues</h2>
-  <p>None at present.</p>
   <h2>Table of contents</h2>
   <ul>
     <li>
@@ -138,11 +136,13 @@
   other type.</p>
   <p>It is valid to pass a <em>codeset</em> symbol that does not refer
   to a codeset known to the implementation. In this case the unknown
-  codeset is treated like an empty codeset.</p>
-  <p>The data structure used to implement a codeset is unspecified.
-  It is also unspecified whether information about a codeset is
-  pre-seeded or lazy-loaded. Different codesets may be implemented
-  differently.</p>
+  codeset is treated like an empty codeset. The <code>codeset?</code>
+  procedure can be used to differentiate between unknown and known
+  empty codesets.</p>
+  <p>The data structure used to implement a codeset is unspecified. It
+  is also unspecified whether information about a codeset is loaded on
+  demand or ahead of time. The codesets provided by an implementation
+  can mix different implementation strategies.</p>
   <h3 id="codeset-registry">Codeset registry</h3>
   <p>Symbols denoting a codeset are tracked in the <a href=
   "https://registry.scheme.org/#codesets">Scheme Registry</a>.</p>
@@ -260,7 +260,7 @@
   Lisp implementation are also supplied.</p>
   <h2 id="acknowledgements">Acknowledgements</h2>
   <h2 id="copyright">Copyright</h2>
-  <p>&copy; 2022 Lassi Kortela.</p>
+  <p>&copy; 2022, 2023 Lassi Kortela.</p>
   <p>Permission is hereby granted, free of charge, to any person
   obtaining a copy of this software and associated documentation
   files (the “Software”), to deal in the Software without
