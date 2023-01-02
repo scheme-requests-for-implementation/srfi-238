@@ -50,7 +50,10 @@
     <li>
       <a href="#examples">Examples</a>
       <ul>
+        <li><a href="#basic-usage">Basic usage</a></li>
+        <li><a href="#promoting-numbers-to-symbols">Promoting numbers to symbols</a></li>
         <li><a href="#enumerations">Enumerations</a></li>
+        <li><a href="#introspection">Introspection</a></li>
       </ul>
     </li>
     <li><a href="#implementation">Implementation</a></li>
@@ -210,6 +213,7 @@
   <p>It’s up to the implementation whether the result string is
   fresh. It is an error for the caller to mutate the result.</p>
   <h2 id="examples">Examples</h2>
+  <h3 id="basic-usage">Basic usage</h3>
   <p>Implementations that provide the <code>errno</code> codeset
       are expected to behave as follows.</p>
   <pre>(codeset? 'errno) =&gt; #t
@@ -227,8 +231,17 @@
   <p>The symbols may be listed in a different order. In some cases the
   number may differ and the message may be in a language other than
   English.</p>
+  <h3 id="promoting-numbers-to-symbols">Promoting numbers to symbols</h3>
+  <p>The following idiom promotes numeric error codes to symbolic ones
+  where possible. For unknown codes it retains the number so that at
+  least some information about the error is preserved.</p>
+  <pre>(let ((code (or (codeset-symbol 'errno code)
+                code)))
+  (display code))
+  </pre>
   <h3 id="enumerations">Enumerations</h3>
-  <p>The following is a way to use R<sup>6</sup>RS enumerations.</p>
+  <p>The following is a way to use R<sup>6</sup>RS enumerations with
+  codesets.</p>
   <pre>(define-enumeration errno
   (EPERM
    ENOENT
@@ -262,6 +275,70 @@
   ECHILD)</pre>
   <p>Now typos such as
   <code>(codeset-message 'errno ECHILE)</code> will be caught.</p>
+  <h3 id="introspection">Introspection</h3>
+  <p>When learning an interface, programmers often like to get an
+  overview of the territory. The tools in this SRFI are accessible
+  from the REPL, providing introspection capabilities to help.</p>
+  <p>First, let's define a helper procedure.</p>
+  <pre>(define (sorted-symbols set)
+  (list-sort (lambda (code1 code2)
+               (&lt; (codeset-number set code1)
+                  (codeset-number set code2)))
+             (codeset-symbols set)))</pre>
+  <p>We can list all the <code>errno</code> symbols in numerical
+    order. This places the oldest codes first, giving us a window into
+    the evolution of Unix. The first 35 codes have to do with files
+    and terminals, with pipes and non-blocking I/O added relatively
+    late. Then comes the socket support.</p>
+<pre>(sorted-symbols 'errno)
+=&gt; (EPERM ENOENT ESRCH EINTR EIO ENXIO E2BIG ENOEXEC EBADF ECHILD
+    EDEADLK ENOMEM EACCES EFAULT ENOTBLK EBUSY EEXIST EXDEV ENODEV
+    ENOTDIR EISDIR EINVAL ENFILE EMFILE ENOTTY ETXTBSY EFBIG
+    ENOSPC ESPIPE EROFS EMLINK EPIPE EDOM ERANGE EAGAIN EWOULDBLOCK
+    EINPROGRESS EALREADY ENOTSOCK EDESTADDRREQ EMSGSIZE EPROTOTYPE
+    ENOPROTOOPT EPROTONOSUPPORT ESOCKTNOSUPPORT EPFNOSUPPORT
+    EAFNOSUPPORT EADDRINUSE EADDRNOTAVAIL ENETDOWN ....)</pre>
+<p>Likewise, the earliest 30 Windows API error codes.</p>
+<pre>(take (sorted-symbols 'windows) 30)
+=&gt; (ERROR_SUCCESS ERROR_INVALID_FUNCTION ERROR_FILE_NOT_FOUND
+    ERROR_PATH_NOT_FOUND ERROR_TOO_MANY_OPEN_FILES ERROR_ACCESS_DENIED
+    ERROR_INVALID_HANDLE ERROR_ARENA_TRASHED ERROR_NOT_ENOUGH_MEMORY
+    ERROR_INVALID_BLOCK ERROR_BAD_ENVIRONMENT ERROR_BAD_FORMAT
+    ERROR_INVALID_ACCESS ERROR_INVALID_DATA ERROR_OUTOFMEMORY
+    ERROR_INVALID_DRIVE ERROR_CURRENT_DIRECTORY ERROR_NOT_SAME_DEVICE
+    ERROR_NO_MORE_FILES ERROR_WRITE_PROTECT ERROR_BAD_UNIT
+    ERROR_NOT_READY ERROR_BAD_COMMAND ERROR_CRC ERROR_BAD_LENGTH
+    ERROR_SEEK ERROR_NOT_DOS_DISK ERROR_SECTOR_NOT_FOUND
+    ERROR_OUT_OF_PAPER ERROR_WRITE_FAULT)</pre>
+  <p>We can also find the maximum Windows API error code. This gives
+  us an idea of the complexity of the API, and tells us how many bits
+  are needed to store codes.</p>
+  <pre>(let ((set 'windows))
+   (fold max 0 (map (lambda (x) (codeset-number set x))
+                    (codeset-symbols set))))
+=&gt; 2250</pre>
+  <p>A network programmer can list the HTTP 4xx codes, showing all the
+  ways in which a request can fail.</p>
+  <pre>(let ((set 'http))
+   (map (lambda (code)
+          (list (codeset-number set code)
+                (codeset-message set code)))
+        (filter (lambda (code)
+                  (&lt;= 400 (codeset-number set code) 499))
+                (sorted-symbols set))))
+=&gt; ((400 "Bad Request") (401 "Unauthorized") (402 "Payment Required")
+    (403 "Forbidden") (404 "Not Found") (405 "Method Not Allowed")
+    (406 "Not Acceptable") (407 "Proxy Authentication Required")
+    (408 "Request Timeout") (409 "Conflict") (410 "Gone")
+    (411 "Length Required") (412 "Precondition Failed")
+    (413 "Request Entity Too Large") (414 "Request URI Too Long")
+    (415 "Unsupported Media Type") (416 "Requested Range Not Satisfiable")
+    (417 "Expectation Failed") (418 "I'm a teapot")
+    (421 "Misdirected Request") (422 "Unprocessable Entity")
+    (423 "Locked") (424 "Failed Dependency") (425 "Too Early")
+    (426 "Upgrade Required") (428 "Precondition Required")
+    (429 "Too Many Requests") (431 "Request Header Fields Too Large")
+    (451 "Unavailable For Legal Reasons"))</pre>
   <h2 id="implementation">Implementation</h2>
   <p>An implementation for Gambit and Gauche is available in this SRFI’s
     <a href="https://github.com/scheme-requests-for-implementation/srfi-238">repository</a>. It provides two codesets, <code>errno</code> and
