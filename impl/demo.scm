@@ -29,5 +29,5 @@
 (show (codeset-symbol 'signal 2))
 (show (codeset-number 'signal 'SIGINT))
 (show (codeset-number 'signal 2))
-(show (codeset-message 'signal 2))
+(show (codeset-message 'signal 'SIGINT))
 (show (codeset-message 'signal 2))
