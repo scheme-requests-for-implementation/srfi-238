@@ -1,4 +1,7 @@
-(import (gambit))
+(import (only (gambit)
+              c-declare
+              c-lambda
+              list-sort))
 (begin
 
   (define (strings->alist numbers symbols)
@@ -28,4 +31,5 @@
 
   (define (signal-alist) (retrieve-strings "signal" strings->alist))
   (define (errno-alist) (retrieve-strings "errno" strings->alist))
+  (define signal-message (c-lambda (int) char-string "strsignal"))
   (define errno-message (c-lambda (int) char-string "strerror")))

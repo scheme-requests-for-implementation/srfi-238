@@ -17,7 +17,7 @@
 
     (define global-codesets
       (list (list 'errno (errno-alist) errno-message)
-            (list 'signal (signal-alist) no-message)))
+            (list 'signal (signal-alist) signal-message)))
 
     (define (typecheck-codeset object)
       (unless (symbol? object)

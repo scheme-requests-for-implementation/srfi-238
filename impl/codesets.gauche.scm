@@ -2,10 +2,9 @@
               filter-map
               iota)
         (only (gauche base)
-              sys-errno-list
+              sys-errno->symbol
               sys-signal-name
-              sys-strerror
-              sys-symbol->errno))
+              sys-strerror))
 (begin
 
   (define (signal-alist)
@@ -15,10 +14,13 @@
                 (iota 100)))
 
   (define (errno-alist)
-    (map (lambda (sym)
-           (cons (sys-symbol->errno sym)
-                 sym))
-         (sys-errno-list)))
+    (filter-map (lambda (num)
+                  (let ((sym (sys-errno->symbol num)))
+                    (and sym (cons num sym))))
+                (iota 200)))
+
+  (define (signal-message num)
+    #f)
 
   (define (errno-message num)
     (sys-strerror num)))
