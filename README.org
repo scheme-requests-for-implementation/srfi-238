@@ -11,7 +11,7 @@ library-name: codesets
 
 This repository hosts [[https://srfi.schemers.org/srfi-238/][SRFI 238]]: Codesets, a [[https://srfi.schemers.org/][Scheme Request for Implementation]].
 
-This SRFI is in /draft/ status.
+This SRFI is in /final/ status.
 See also [[/srfi-170/][SRFI 170: POSIX API]], [[/srfi-198/][SRFI 198: Foreign Interface Status]], and [[/srfi-199/][SRFI 199: POSIX errno manipulation]].
 The full documentation for this SRFI can be found in the [[https://srfi.schemers.org/srfi-238/srfi-238.html][SRFI Document]].
 
